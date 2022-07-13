@@ -1,37 +1,58 @@
-const multipart = require('parse-multipart')
-const fetch = require('node-fetch')
+const multipart = require('parse-multipart');
+const fetch = require('node-fetch');
 
-async function analyzeImage(img) {
-    const subscription_key = process.env.SUBSCRIPTION_KEY
-   
-    const uribase = process.env.API_ENDPOINT + '/face/v1.0/detect'
-    const params = {
-        'returnFaceID': "true",
-        'returnFaceAttributes': "emotion"
-    }
-    const resp = await fetch(uribase + '?' + params.toString(), {
-        method: "POST",
-        body: params,
+module.exports = async function (context, req) {
+    console.log(req.headers['content-type'])
+    const boundary = multipart.getBoundary(req.headers['content-type']);
+    const body = req.body
+    const parts = multipart.Parse(body,boundary)
+
+
+    const result = await analyzeImage(parts[0].data);
+
+    let emotions = result[0].faceAttributes.emotion;
+
+    let objects = Object.values(emotions);
+
+    const main_emotion = Object.keys(emotions).find(key => emotions[key] === Math.max(...objects));
+    const API_KEY = process.env.GIFKEY
+    let gif = await fetch("https://api.giphy.com/v1/gifs/translate?api_key=" + API_KEY+"&limit=20&s="+main_emotion)
+    let done = await gif.json()
+    
+    context.res = {
+        body: done.data.url
+    };
+}
+
+async function analyzeImage(img){
+    // const subscriptionKey = process.env.SUBSCRIPTIONKEY;
+    // const uriBase = process.env.EMOTIONAL_ENDPOINT + '/face/v1.0/detect';
+    const subscriptionKey = "2b46dc89f4624d6ba01b0b629dd94ad0"
+    const uriBase = "https://placeholdeer-face-api.cognitiveservices.azure.com/"+ '/face/v1.0/detect'
+
+    let params = new URLSearchParams({
+        'returnFaceId': 'true',
+        'returnFaceAttributes': 'emotion'     //FILL IN THIS LINE
+    })
+
+    //COMPLETE THE CODE
+    let resp = await fetch(uriBase + '?' + params.toString(), {
+        method: 'POST',  //WHAT TYPE OF REQUEST?
+        body: img,  //WHAT ARE WE SENDING TO THE API?
+        
+            //ADD YOUR TWO HEADERS HERE
         headers: {
-            "content-type": "application/octet-stream",
-            "Ocp-Apim-Subscription-Key": subscription_key
+            'Content-Type' : 'application/octet-stream',
+
+            'Ocp-Apim-Subscription-Key': subscriptionKey
         }
     })
-    const data = await resp.json()
-    return data
+
+    let data = await resp.json();
+
+    return data;
 }
 
 
 
-module.exports = async function (context, req) {
-    
-    const boundary = multipart.getBoundary(req.headers['content-type']) //boundary splits it like the XXX example
-    const body = req.body
-    parts = multipart.Parse(body, boundary)
-    const result = await analyzeImage(parts[0].data)
-    context.res = { 
-    body:{
-        result
-    }
-}}
-//what are the exports?
+
