@@ -18,12 +18,10 @@ module.exports = async function (context, req) {
     const API_KEY = process.env.GIFKEY
     let gif = await fetch("https://api.giphy.com/v1/gifs/translate?api_key=" + API_KEY+"&limit=20&s="+main_emotion)
     let done = await gif.json()
-    
     context.res = {
         body: done.data.url
     };
 }
-
 async function analyzeImage(img){
     // const subscriptionKey = process.env.SUBSCRIPTIONKEY;
     // const uriBase = process.env.EMOTIONAL_ENDPOINT + '/face/v1.0/detect';
