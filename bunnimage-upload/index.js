@@ -23,7 +23,7 @@ async function Uploadfile(parsedbody, ext) {
     const containername = "serverlessblob1"
     const containerclient = blobServicesClient.getContainerClient(containername)
 
-    const blobName = "text." + ext;
+    const blobName = "test." + ext;
     const blockblobclient  = containerclient.getBlockBlobClient(blobName)
 
     const uploadblobResponse = await blockblobclient.upload(parsedbody[0].data, parsedbody[0].data.length)
