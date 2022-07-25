@@ -11,19 +11,25 @@ module.exports = async function (context, req) {
     const body = req.body
     const parseBody = multipart.Parse(body,boundary)
     let exted = parseBody[0].type.split("/")[1]
-    let responseMessage = await Uploadfile(parseBody, exted)
+    let responseMessage = ''
+    codename = req.headers['codename']
+    try {
+        responseMessage = await Uploadfile(parseBody, exted, codename)}
+    catch (err){
+        responseMessage = "Sorry! No image attached."
+    }
     context.res = {
         // status: 200, /* Defaults to 200 */
         body: responseMessage
     };
 }
 
-async function Uploadfile(parsedbody, ext) {
+async function Uploadfile(parsedbody, ext, codename) {
     const blobServicesClient = BlobServiceClient.fromConnectionString(connectionstring)
     const containername = "serverlessblob1"
     const containerclient = blobServicesClient.getContainerClient(containername)
 
-    const blobName = "test." + ext;
+    const blobName = `${codename}` + ext;
     const blockblobclient  = containerclient.getBlockBlobClient(blobName)
 
     const uploadblobResponse = await blockblobclient.upload(parsedbody[0].data, parsedbody[0].data.length)
