@@ -6,16 +6,16 @@ const connectionstring = process.env["AZURE_STORAGE_CONNECTION_STRING"]
 module.exports = async function (context, req) {
     
     context.log('JavaScript HTTP trigger function processed a request.');
-
-    const boundary = multipart.getBoundary(req.headers['content-type'])
-    const body = req.body
-    const parseBody = multipart.Parse(body,boundary)
-    let exted = parseBody[0].type.split("/")[1]
-    let responseMessage = ''
-    codename = req.headers['codename']
     try {
+        const boundary = multipart.getBoundary(req.headers['content-type'])
+        const body = req.body
+        const parseBody = multipart.Parse(body,boundary)
+        let exted = parseBody[0].type.split("/")[1]
+        let responseMessage = ''
+        let codename = req.headers['codename']
         responseMessage = await Uploadfile(parseBody, exted, codename)}
     catch (err){
+        context.log(err)
         responseMessage = "Sorry! No image attached."
     }
     context.res = {
