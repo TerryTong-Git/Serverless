@@ -8,12 +8,15 @@
   <body>
       <div>
               <h1 id="h1">Give your code some love ❤️</h1>
-              <form id="bunnForm">
+              <form id="bunnForm" enctype="multipart/form-data">
                   <label>Code: </label>
-                  <input type="text" id="username" name="name" /><br>
-                  <input value="Submit" type="submit" />
+                  <input type = "file" id = "image" name = "image" accept="image/jpeg,image/x-png"/>
+                  <input id = "username" type = "text" placeholder = "Enter your file's name"/>
+                  <input type = "submit"/>
               </form>
               <br/>
               <div id="output"></div>
-        </div>
-    </body>  
+              <div id=" error"></div>
+      </div>
+      <script src = "index.js"></script>
+  </body>  
