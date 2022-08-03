@@ -32,6 +32,23 @@ bunnform.addEventListener('submit', async function (event) {
 
 })
 
+const download = document.getElementById("button2")
+download.addEventListener("click", async function (event) {
+    console.log("clicked button")
+    const username = document.getElementById("downloadusername").value
+    console.log(username)
+    const config = {
+        "method" : "GET",
+        "headers" : {
+            "username": username,
+            },
+    }
+    const res = await fetch("https://terryserverless.azurewebsites.net/api/bunnimage-download?code=qfRUlAwdffCergqJR_D57R9SjAwRgzECYOhlITrREJMmAzFuR4RMPw==", config)
+    const data = await res.json()
+    console.log(data)
+    window.open(data.downloadUri, "_self")
+} )
+
 // const file = document.getElementsByName("image").value;
 // if (file) {
 
